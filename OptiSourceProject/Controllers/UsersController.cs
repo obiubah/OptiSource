@@ -9,6 +9,8 @@ using OptiSourceProject.Services;
 
 namespace OptiSourceProject.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class UsersController : ControllerBase
     {
         private IUserService _userService;

@@ -19,5 +19,8 @@ namespace OptiSourceProject.Models
 
         [Required]
         public string Address { get; set; }
+
+        [Required]
+        public string EmailAddress { get; set; }
     }
 }

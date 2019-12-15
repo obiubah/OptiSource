@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using OptiSourceProject.Database;
 using AutoMapper;
+using OptiSourceProject.Services;
+using OptiSourceProject.Services.Impl;
 
 namespace OptiSourceProject
 {
@@ -25,10 +27,12 @@ namespace OptiSourceProject
             services.AddCors();
 
             services.AddDbContext<UserDbContext>(options => {
-                options.UseSqlServer(Configuration.GetConnectionString("MyConnection"));
+                options.UseMySql(Configuration.GetConnectionString("MyConnection"));
             });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +52,18 @@ namespace OptiSourceProject
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
             });
+
+            UpdateDatabase(app);
+        }
+
+        private static void UpdateDatabase(IApplicationBuilder app) {
+            using (var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope()) {
+                using (var context = serviceScope.ServiceProvider.GetService<UserDbContext>()) {
+                    context.Database.Migrate();
+                }
+            }
         }
     }
 }
