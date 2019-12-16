@@ -27,7 +27,7 @@ namespace OptiSourceProject
             services.AddCors();
 
             services.AddDbContext<UserDbContext>(options => {
-                options.UseMySql(Configuration.GetConnectionString("MyConnection"));
+                options.UseInMemoryDatabase("usersDatabase");
             });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -52,18 +52,6 @@ namespace OptiSourceProject
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
             });
-
-            UpdateDatabase(app);
-        }
-
-        private static void UpdateDatabase(IApplicationBuilder app) {
-            using (var serviceScope = app.ApplicationServices
-                .GetRequiredService<IServiceScopeFactory>()
-                .CreateScope()) {
-                using (var context = serviceScope.ServiceProvider.GetService<UserDbContext>()) {
-                    context.Database.Migrate();
-                }
-            }
         }
     }
 }

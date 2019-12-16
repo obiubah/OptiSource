@@ -14,13 +14,13 @@ namespace OptiSourceProject.Services.Impl
             _userDbContext = userDbContext;
         }
 
-        public User Authenticate(string username, string password)
+        public User Authenticate(string email, string password)
         {
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password)) {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password)) {
                 return null;
             }
 
-            var user = _userDbContext.Users.SingleOrDefault(user => user.Username == username );
+            var user = _userDbContext.Users.SingleOrDefault(user => user.EmailAddress == email );
 
             if (user == null) {
                 return null;
@@ -39,8 +39,8 @@ namespace OptiSourceProject.Services.Impl
                 throw new AppException("Password is required");
             }
 
-            if (_userDbContext.Users.Any(x => x.Username == user.Username)) {
-                throw new AppException("Username \"" + user.Username + "\" is already taken");
+            if (_userDbContext.Users.Any(x => x.EmailAddress == user.EmailAddress)) {
+                throw new AppException("Email Address \"" + user.EmailAddress + "\" is already taken");
             }
 
             byte[] passwordHash, passwordSalt;
